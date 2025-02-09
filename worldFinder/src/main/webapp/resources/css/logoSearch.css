@@ -1,0 +1,67 @@
+#smallLogo{
+    width: 50px;
+    margin-top: 20px;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+
+
+#sch {
+    text-align: center;
+    margin: auto;
+    position: relative;
+    width: 300px;
+}
+
+
+#searchMagnifier {
+    cursor : pointer;
+    position: absolute;
+    left: 230px;
+    width: 15px;
+    top: 7px;
+    right: 50px;
+    margin: 0px;
+    z-index: inherit;
+}
+
+#res{
+    text-align : left;
+    display : none;
+    position: absolute;
+    background-color: white;
+    margin-left: 70px;
+    width: 160px;
+    padding: 10px 12px;
+    border: 3px solid black;
+    border-top : 0px;
+    border-radius: 8px;
+
+}
+.clickSpan {
+    cursor : pointer;
+    display : inline-block;
+    width : 100%;
+    height: auto;
+}
+.clickSpan:hover{
+    background-color: cornsilk;
+}
+
+#searchBar {
+    width: 170px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    padding: 5px 6px;
+    font-size: 14px;
+}
+#join{
+    display: inline-block;
+    margin-top: 10px;
+    float: right;
+}
+
+#focusSpan{
+    background-color: cornsilk;
+}

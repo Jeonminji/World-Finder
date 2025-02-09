@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.worldfinder.mapper.FoodPostMapper">
+
+
+
+<!--  관리자 맛집 게시글
+CREATE TABLE FOODPOST_TABLE3 (
+   fp_Idx   NUMBER   primary key,
+   country   VARCHAR2(50)   references c_class_table3(country),
+   fp_Image   VARCHAR2(100),
+   fp_Name   VARCHAR2(50)   NOT NULL,
+   fp_Address   VARCHAR2(100)   NOT NULL,
+   fp_Tel   VARCHAR2(20),
+   fp_Category   VARCHAR2(20),
+   fp_Menu   VARCHAR2(50),
+   reg_Date   DATE   DEFAULT SYSDATE,
+   update_Date   DATE
+); -->
+
+
+	<insert id="insertFood" parameterType="org.worldfinder.domain.FoodPostVO">
+		insert into FOODPOST_TABLE3 values(
+			foodpost_seq3.NEXTVAL
+			,#{country}
+			,#{fp_Image}
+			,#{fp_Name}
+			,#{fp_Address}
+			,#{fp_Tel}
+			,#{fp_Category}
+			,#{fp_Menu}
+			,SYSDATE
+			,null			
+		)
+	</insert>
+	
+	<update id="updateFood" parameterType="org.worldfinder.domain.FoodPostVO">
+		update FOODPOST_TABLE3
+		set
+		fp_Image = #{fp_Image}
+		,fp_Name = #{fp_Name}
+		,fp_Address = #{fp_Address}
+		,fp_Tel = #{fp_Tel}
+		,fp_Category = #{fp_Category}
+		,fp_Menu = #{fp_Menu}
+		,update_Date = SYSDATE
+		where
+		fp_Idx = #{fp_Idx}
+	</update>
+	
+	<delete id="removeFood" parameterType="int">
+		delete from FOODPOST_TABLE3
+		where fp_Idx = #{fp_Idx}
+	</delete>
+	
+	
+	
+	<select id="getFoodList" resultType="org.worldfinder.domain.FoodPostVO">
+		<![CDATA[
+			select ROW_NUMBER() OVER(ORDER BY fp_idx desc) as rn, fp_idx country, fp_Image, fp_Name, fp_Address, fp_Tel, fp_Category, 
+							fp_Menu, reg_Date,  update_Date
+			from
+				(select 
+				ROW_NUMBER() OVER(ORDER BY fp_idx asc) as rn, fp_Idx, country, fp_Image, fp_Name, fp_Address, fp_Tel, fp_Category, 
+							fp_Menu, reg_Date,  update_Date
+				from FOODPOST_TABLE3
+				where rownum <= 
+				]]>#{total} - (#{amount} * #{page} - #{amount})
+				<if test="country!='' and !country.equals('')">and country = #{country}</if>
+				<![CDATA[)
+			where rn > ]]>#{total} - (#{amount} * #{page})
+	</select>
+	
+	
+	<select id="countFoodList" parameterType="String" resultType="int">
+		select count(*) from FOODPOST_TABLE3
+		where 1=1
+		<if test="country!='' and !country.equals('')">and country = #{country}</if>
+	</select>
+	
+	<select id="getFoodPost" parameterType="int" resultType="org.worldfinder.domain.FoodPostVO">
+		select * from FOODPOST_TABLE3
+		where fp_idx = #{fpIdx}
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+</mapper>

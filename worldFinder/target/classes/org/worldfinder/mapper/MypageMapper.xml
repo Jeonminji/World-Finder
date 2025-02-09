@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.worldfinder.mapper.MypageMapper">
+
+	<select id="getUserInfo" resultType="org.worldfinder.domain.UserVO">
+		select * from user_table3 where u_writer = #{u_writer}
+	</select>
+
+	<select id="getUserPost" resultType="org.worldfinder.domain.UserPostVO">
+		select * from userpost_table3 where u_writer = #{u_writer}
+	</select>
+
+	<select id="getUserComment" resultType="org.worldfinder.domain.MyPageCommentsVO">
+		<!-- select c.u_writer, u.title, c.c_content, c.reg_date, u.up_idx, c.up_idx, c.c_idx from userpost_table3 u inner join comment_table3 c on u.up_idx = c.up_idx where c.u_writer = 'asdf1234'; -->
+		select c.u_writer, u.title, c.c_content, c.reg_date, u.up_idx, u.country 
+		from userpost_table3 u inner join comment_table3 c 
+		on u.up_idx = c.up_idx 
+		where c.u_writer = #{u_writer}
+	</select>
+
+	<select id="getUserReply" resultType="org.worldfinder.domain.MyPageRepliesVO">
+		select n.u_writer, u.title, n.nc_content, n.reg_date, u.up_idx, u.country 
+		from userpost_table3 u inner join nested_c_table3 n 
+		on u.up_idx = n.up_idx 
+		where n.u_writer = #{u_writer}
+	</select>
+
+	<select id="getUserScrap" resultType="org.worldfinder.domain.UserPostVO">
+		select * 
+		from scrap_table3 s inner join userpost_table3 u 
+		on s.up_idx = u.up_idx 
+		where s.u_writer = #{u_writer}
+	</select>
+	
+	<select id="getUserPay" resultType="org.worldfinder.domain.MyPagePayVO">
+		select i.item_name, u.hotel_idx, u.final_price, u.buy_date, u.u_writer, i.country, u.item_idx
+		from item_table3 i inner join user_oders_table3 u
+		on i.item_idx = u.item_idx
+		where u.u_writer = #{u_Writer}
+	</select>
+
+</mapper>

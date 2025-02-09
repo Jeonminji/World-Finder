@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.worldfinder.mapper.UserPostCommentMapper">
+
+	<select id="getAllCommentList" parameterType="long" resultType="org.worldfinder.domain.CommentVO">
+		select * from comment_table3 where up_idx = #{up_idx}
+	</select>
+	
+	<select id="getAllNestedComList" parameterType="long" resultType="org.worldfinder.domain.NestedCVO">
+		select * from nested_c_table3 where c_idx = #{c_idx}
+	</select>
+	
+	<select id="getTotalComment" parameterType="long" resultType="int">
+		select count(*) from comment_table3 where up_idx = #{up_idx}
+	</select>
+	
+	<select id="getTotalNestedCom" parameterType="long" resultType="int">
+		select count(*) from nested_c_table3 where up_idx = #{up_idx}
+	</select>
+	
+	<insert id="insertComment" parameterType="org.worldfinder.domain.CommentVO">
+		insert into comment_table3(c_idx, c_content, u_writer, up_idx)
+		values(
+			comment_seq3.nextval,
+			#{c_content},
+			#{u_writer},
+			#{up_idx}
+		)
+	</insert>
+	
+	<insert id="insertNestedCom" parameterType="org.worldfinder.domain.NestedCVO">
+		insert into nested_c_table3(nc_idx, nc_content, u_writer, c_idx, up_idx)
+		values(
+			nested_seq3.nextval,
+			#{nc_content},
+			#{u_writer},
+			#{c_idx},
+			#{up_idx}
+		)
+	</insert>
+	
+	<select id="getComment" parameterType="long" resultType="org.worldfinder.domain.CommentVO">
+		select * from comment_table3 where c_idx = #{c_idx}
+	</select>
+
+	<select id="getNestedCom" parameterType="long" resultType="org.worldfinder.domain.NestedCVO">
+		select * from nested_c_table3 where nc_idx = #{nc_idx}
+	</select>
+	
+	<update id="updateComment" parameterType="org.worldfinder.domain.CommentVO">
+		update comment_table3 set
+			c_content = #{c_content}
+		where c_idx = #{c_idx}
+	</update>
+
+	<update id="updateNestedCom" parameterType="org.worldfinder.domain.NestedCVO">
+		update nested_c_table3 set
+			nc_content = #{nc_content}
+		where nc_idx = #{nc_idx}
+	</update>
+	
+	<delete id="deleteComment" parameterType="long">
+		delete from comment_table3 where c_idx = #{c_idx}
+	</delete>
+
+	<delete id="deleteNestedCom" parameterType="long">
+		delete from nested_c_table3 where nc_idx = #{nc_idx}
+	</delete>
+	
+	
+	
+	<!-- 댓글 좋아요 -->
+	<insert id="likeComment" parameterType="org.worldfinder.domain.LikeVO">
+		insert into comment_like_table3 (u_writer, c_idx)
+		values(
+			#{u_writer},
+			#{idx}
+		)
+	</insert>
+	
+	<delete id="dislikeComment" parameterType="org.worldfinder.domain.LikeVO">
+		delete from comment_like_table3 where c_idx = #{idx} and u_writer = #{u_writer}
+	</delete>
+	
+	<select id="getCommentLikeCount" parameterType="long" resultType="int">
+		select count(*) from comment_like_table3 where c_idx = {idx}
+	</select>
+	
+	<select id="checkCommentLike" parameterType="org.worldfinder.domain.LikeVO" resultType="boolean">
+		select count(*) from comment_like_table3 where c_idx = #{idx} and u_writer = #{u_writer}
+	</select>
+</mapper>

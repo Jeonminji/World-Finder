@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.worldfinder.mapper.UserPostMapper">
+   <select id="getAllList" resultType="org.worldfinder.domain.UserPostVO">
+		<![CDATA[
+			select rownum rn, up_idx, u_writer, country, title, up_content, reg_date, hit, up_like, up_hide, thumbnail from
+				(select rownum rn, up_idx, u_writer, country, title, up_content, reg_date, hit, up_like, up_hide, thumbnail
+				 from userpost_table3
+				 where rownum <= #{cri.pageNum} * #{cri.amount} order by up_idx desc)
+			where rn > (#{cri.pageNum} -1) * #{cri.amount} and country = #{map2.country}
+		]]>
+	</select>
+
+	<select id="getTotalCount" resultType="int">
+		select count(*) from userpost_table3
+	</select>
+
+	<select id="postGet" parameterType="long" resultType="org.worldfinder.domain.UserPostVO">
+		select * from userpost_table3 where up_idx = #{up_idx}
+	</select>
+
+	<insert id="postInsert" parameterType="org.worldfinder.domain.UserPostVO">
+		insert into userpost_table3(up_idx, u_writer, country, title, up_content, thumbnail)
+		values(
+			userpost_seq3.nextval,
+			#{u_writer},
+			#{country},
+			#{title},
+			#{up_content},
+			#{thumbnail}
+		)
+	</insert>
+
+	<update id="postUpdate" parameterType="org.worldfinder.domain.UserPostVO">
+		update userpost_table3 set
+			title = #{title}, up_content = #{up_content}, update_date = sysdate, thumbnail = #{thumbnail}
+		where up_idx = #{up_idx}
+	</update>
+
+	<delete id="postDelete" parameterType="long">
+		delete from userpost_table3 where up_idx = #{up_idx}
+	</delete>
+	
+	<update id="updateHit" parameterType="org.worldfinder.domain.UserPostVO">
+		update userpost_table3 set hit = #{hit} where up_idx = #{up_idx}
+	</update>
+	
+	
+	<!-- =============== 좋아요 =============== -->
+	<update id="updateLike" parameterType="org.worldfinder.domain.LikeVO">
+		update userpost_table3 set up_like = #{up_like} where up_idx = #{up_idx}
+	</update>
+	
+	<insert id="like" parameterType="org.worldfinder.domain.LikeVO">
+		insert into POST_LIKE_TABLE3(u_writer, up_idx)
+		values(
+			#{u_writer},
+			#{idx}
+		)
+	</insert>
+	
+	<delete id="dislike" parameterType="org.worldfinder.domain.LikeVO">
+		delete from POST_LIKE_TABLE3 where up_idx = #{idx} and u_writer = #{u_writer}
+	</delete>
+	
+	<select id="getLikeCount" parameterType="long" resultType="int">
+		select count(*) from post_like_table3 where up_idx = #{idx}
+	</select>
+	
+	<select id="checkLike" parameterType="org.worldfinder.domain.LikeVO" resultType="boolean">
+		select count(*) from post_like_table3 where up_idx = #{idx} and u_writer = #{u_writer}
+	</select>
+	
+	
+	<!-- =============== 스크랩 =============== -->
+	<insert id="scrap" parameterType="org.worldfinder.domain.ScrapVO">
+		insert into scrap_table3(u_writer, up_idx)
+		values(
+			#{u_writer},
+			#{up_idx}
+		)
+	</insert>
+	
+	<delete id="scrapCancle" parameterType="org.worldfinder.domain.ScrapVO">
+		delete from scrap_table3 where up_idx = #{up_idx} and u_writer = #{u_writer}
+	</delete>
+	
+	<select id="checkScrap" parameterType="org.worldfinder.domain.ScrapVO" resultType="boolean">
+		select count(*) from scrap_table3 where up_idx = #{up_idx} and u_writer = #{u_writer}
+	</select>
+	
+	
+	<!-- =============== 신고 =============== -->
+	<insert id="postReport" parameterType="org.worldfinder.domain.ReportVO">
+		insert into report_table3(r_idx, r_content, reg_date, r_category, idx, u_writer)
+		values(
+			report_seq3.nextval,
+			#{r_content},
+			sysdate,
+			#{r_category},
+			#{idx},
+			#{u_writer}
+		)
+	</insert>
+	
+</mapper>

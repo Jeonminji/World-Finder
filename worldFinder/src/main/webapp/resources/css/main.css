@@ -1,0 +1,78 @@
+body {
+    margin: 0px;
+
+}
+img {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+#body{
+    margin: auto;
+    width: 1000px;
+    text-align: center;
+}
+
+#sch {
+    margin: auto;
+    position: relative;
+    width: 500px;
+}
+
+
+#searchMagnifier {
+    cursor : pointer;
+    position : absolute;
+    width: 17px;
+    top: 10px;
+    right: 12px;
+    margin: 0px;
+}
+
+#res{
+    z-index: 100;
+    text-align : left;
+    display : none;
+    margin: auto;
+    position: absolute;
+    background-color: white;
+    left: 0%;
+    width: 496px;
+    padding: 10px 12px;
+    border: 3px solid black;
+    border-top : 0px;
+    border-radius: 8px;
+
+}
+.clickSpan {
+    cursor : pointer;
+    display : inline-block;
+    width : 100%;
+    height: auto;
+}
+
+#searchBar {
+    width: 100%;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+#join{
+    display: inline-block;
+    margin-top: 10px;
+    float: right;
+}
+
+#focusSpan{
+    background-color: cornsilk;
+}
+#logo{
+    display: block;
+    width: 300px;
+    cursor: pointer;
+    text-align: center;
+    margin-left: 350px;
+}
+.clickSpan:hover{
+    background-color: cornsilk;
+}

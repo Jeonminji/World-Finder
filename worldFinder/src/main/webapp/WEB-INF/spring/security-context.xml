@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:security="http://www.springframework.org/schema/security"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+
+	<bean id="customUserDetailService" class="org.worldfinder.security.CustomUserDetailService"></bean>
+	<bean id="customAccessDenied" class="org.worldfinder.security.CustomAccessDeniedHandler"></bean>
+	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
+
+	<security:http auto-config="true" use-expressions="true">
+		<!--접근권한 설정한곳-->
+		<security:intercept-url pattern="/adminPage" access="hasAuthority('admin')"/>
+		<security:intercept-url pattern="/countryWrite" access="hasAuthority('admin')"/>
+		<security:intercept-url pattern="/country/modify/*" access="hasAuthority('admin')"/>
+
+		<security:access-denied-handler ref="customAccessDenied"/>
+		<security:form-login login-page="/user/loginPage"/>
+		<security:logout logout-url="/user/logout" invalidate-session="true" logout-success-url="/"/>
+
+		<!--csrf 사용여부-->
+		<security:csrf disabled="true"/>
+	</security:http>
+
+	<security:authentication-manager>
+		<security:authentication-provider user-service-ref="customUserDetailService">
+			<security:password-encoder ref="bcryptPasswordEncoder"/>
+		</security:authentication-provider>
+	</security:authentication-manager>
+</beans>
+
+
+
+
+

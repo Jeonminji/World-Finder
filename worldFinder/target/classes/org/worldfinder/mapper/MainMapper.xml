@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.worldfinder.mapper.MainMapper">
+    <select id="readCountry" resultType="org.worldfinder.domain.CountryClassVO">
+             SELECT * FROM C_CLASS_TABLE3
+    </select>
+    <insert id="writeRequest" parameterType="org.worldfinder.domain.RequestVO">
+        insert into REQUEST_TABLE3 values (#{rq_name},#{rq_address},#{rq_tel},#{rq_category},#{rq_url})
+    </insert>
+    <select id="readRequest" resultType="org.worldfinder.domain.RequestVO" parameterType="org.worldfinder.domain.Criteria">
+        <![CDATA[	 SELECT * FROM
+            (select /*+index_desc(tbl_board pk_board) */
+                 rownum rn, RQ_NAME, RQ_ADDRESS, RQ_TEL, RQ_CATEGORY,RQ_URL
+             from REQUEST_TABLE3
+             where rownum <= (#{pageNum} * #{amount}) ) s
+        where s.rn > ((#{pageNum}-1) * #{amount})
+         order by rn desc
+        ]]>
+
+
+    </select>
+    <select id="readUserReport" resultType="org.worldfinder.domain.ReportVO" parameterType="org.worldfinder.domain.Criteria">
+            <![CDATA[
+                SELECT * FROM
+                    (select rownum rn, idx,r_category,reg_date  ,r_count from
+                        (select idx , r_category  ,count(*)as r_count,min(REG_DATE) as reg_date from REPORT_TABLE3
+                         GROUP By idx, r_category) t
+                    where r_category = 'post' and rownum  <= (#{pageNum} * #{amount})
+                    GROUP By idx, r_category, rownum,r_count,reg_date ) s
+                where s.rn > ((#{pageNum}-1) * #{amount})
+                order by r_count desc
+            ]]>
+    </select>
+    <select id="readCommentReport" resultType="org.worldfinder.domain.ReportVO" parameterType="org.worldfinder.domain.Criteria">
+        <![CDATA[ SELECT * FROM
+                (select rownum rn , idx,r_category,reg_date  ,r_count from
+                    (select idx , r_category  ,count(*)as r_count,min(REG_DATE) as reg_date from REPORT_TABLE3
+                     GROUP By idx, r_category) t
+                 where r_category in ('comment','reply') and rownum <= (#{pageNum} * #{amount})
+                 GROUP By idx, r_category,rownum,r_count,reg_date ) s
+            where s.rn > ((#{pageNum}-1) * #{amount})
+             order by r_count desc
+        ]]>
+    </select>
+    <select id="readContinent" resultType="org.worldfinder.domain.CountryClassVO">
+        select distinct CONTINENT , DETAILS_CONTINENT FROM C_CLASS_TABLE3
+    </select>
+    <select id="countryList" resultType="hashMap" parameterType="String">
+        select COUNTRY from C_CLASS_TABLE3 where DETAILS_CONTINENT = #{details_continet}
+    </select>
+    <insert id="writeCountry" parameterType="org.worldfinder.domain.CountryVO">
+        INSERT INTO COUNTRY_TABLE3
+        VALUES (#{country},#{content},SYSDATE,#{c_img})
+    </insert>
+    <select id="readCountryPage" resultType="org.worldfinder.domain.CountryVO" parameterType="String">
+        SELECT * FROM  COUNTRY_TABLE3 WHERE COUNTRY = #{country}
+    </select>
+    <select id="readfilter" resultType="hashMap" parameterType="String">
+
+        select distinct
+            <choose>
+                <when test="category == 'DETAILS_CONTINENT'">
+                    DETAILS_CONTINENT from C_CLASS_TABLE3 where CONTINENT = #{filterValue}
+                </when>
+                <otherwise>COUNTRY from C_CLASS_TABLE3 where DETAILS_CONTINENT = #{filterValue}</otherwise>
+            </choose>
+    </select>
+    <select id="getTotalCount" resultType="int" parameterType="String">
+        SELECT count(*) FROM
+        <choose>
+            <when test="category == 'post'">
+                REPORT_TABLE3 WHERE R_CATEGORY = #{category}
+            </when>
+            <when test="category == 'request'">
+                REQUEST_TABLE3
+            </when>
+            <otherwise> REPORT_TABLE3  WHERE R_CATEGORY != 'post'</otherwise>
+        </choose>
+    </select>
+    <select id="clearCountList" resultType="hashMap">
+        SELECT country FROM  COUNTRY_TABLE3
+    </select>
+    <update id="countryModify" parameterType="org.worldfinder.domain.CountryVO">
+        update COUNTRY_TABLE3
+        set  CONTENT = #{content}  <if test="c_img != ''"> , C_IMG = #{c_img} </if>
+        where COUNTRY = #{country}
+    </update>
+    <delete id="deleteCountry" parameterType="String">
+        delete from COUNTRY_TABLE3 where COUNTRY = #{country}
+    </delete>
+
+    <select id="countrySearch" parameterType="String" resultType="String">
+        select country from C_CLASS_TABLE3 where  DETAILS_CONTINENT = #{details_continent}
+    </select>
+
+
+    <!--임시로-->
+    <select id="userPostSample" resultType="org.worldfinder.domain.UserPostVO" parameterType="String">
+        select UP_IDX, U_WRITER, TITLE, REG_DATE, HIT, UP_LIKE , THUMBNAIL from
+            USERPOST_TABLE3 where COUNTRY = #{country} and <![CDATA[ ROWNUM <= 6 ]]> and up_hide = 'false' order by HIT desc
+    </select>
+
+    <select id="repPost" resultType="org.worldfinder.domain.UserPostVO" parameterType="long">
+        select U_WRITER, TITLE,UP_CONTENT ,reg_date from USERPOST_TABLE3 where up_idx = #{idx}
+    </select>
+    <select id="repComment" resultType="org.worldfinder.domain.CommentVO" parameterType="long">
+        select U_WRITER, C_CONTENT, reg_date from COMMENT_TABLE3 where C_IDX = #{idx}
+    </select>
+    <select id="repNestedC" resultType="org.worldfinder.domain.NestedCVO" parameterType="long">
+        select U_WRITER, NC_CONTENT, reg_date from NESTED_C_TABLE3 where NC_IDX = #{idx}
+    </select>
+
+    <select id="repReason" resultType="Map" parameterType="org.worldfinder.domain.ReportVO">
+        select R_CONTENT from REPORT_TABLE3 where IDX = #{idx} and R_CATEGORY = #{r_category}
+    </select>
+
+    <update id="blind" parameterType="org.worldfinder.domain.ReportVO">
+        update
+        <choose>
+            <when test="r_category == 'comment'">
+                COMMENT_TABLE3 SET C_HIDE = 'true'
+                WHERE C_IDX = #{idx}
+            </when>
+            <when test="r_category == 'post'">
+                USERPOST_TABLE3 SET UP_HIDE = 'true'
+                WHERE UP_IDX = #{idx}
+            </when>
+            <otherwise>
+                NESTED_C_TABLE3 SET NC_HIDE = 'true'
+                WHERE NC_IDX = #{idx}
+            </otherwise>
+        </choose>
+    </update>
+    <delete id="removeReport" parameterType="org.worldfinder.domain.ReportVO">
+        delete from REPORT_TABLE3
+        WHERE R_CATEGORY = #{r_category} AND IDX = #{idx}
+    </delete>
+
+</mapper>

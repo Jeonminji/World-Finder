@@ -1,0 +1,148 @@
+/*쓰는 태그 예시*/
+/*           <div class="box bg-1">
+                <button class="button button--ujarak button--border-thin button--text-thick">Publish</button>
+                <button class="button button--ujarak button--border-thin button--text-thick">Vote</button>
+                <button class="button button--ujarak button--border-thin button--text-thick">Delete</button>
+            </div>
+            <div class="box bg-2">
+                <button class="button button--ujarak button--border-medium button--round-s button--text-thick">Publish</button>
+                <button class="button button--ujarak button--border-medium button--round-s button--text-thick">Vote</button>
+                <button class="button button--ujarak button--border-medium button--round-s button--text-thick">Delete</button>
+            </div>
+            <div class="box bg-3">
+                <button class="button button--ujarak button--border-thick button--text-upper button--size-s button--inverted button--text-thick">Publish</button>
+                <button class="button button--ujarak button--border-thick button--text-upper button--size-s button--inverted button--text-thick">Vote</button>
+                <button class="button button--ujarak button--border-thick button--text-upper button--size-s button--inverted button--text-thick">Delete</button>
+            </div>  */
+
+
+
+
+/**,*/
+/**:after,*/
+/**:before {*/
+/*    -webkit-box-sizing: border-box;*/
+/*    box-sizing: border-box;*/
+/*}*/
+
+
+.button {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/* Common button styles */
+.button {
+    cursor: pointer;
+    min-width: 70px;
+    max-width: 300px;
+    display: inline-block;
+    padding: 5px 10px;
+    border: none;
+    background: none;
+    color: inherit;
+    vertical-align: middle;
+    position: relative;
+    z-index: 1;
+    -webkit-backface-visibility: hidden;
+    -moz-osx-font-smoothing: grayscale;
+}
+.button:focus {
+    outline: none;
+}
+.button > span {
+    vertical-align: middle;
+}
+
+/* Text color adjustments (we could stick to the "inherit" but that does not work well in Safari) */
+.bg-1 .button {
+    color: #37474f;
+    border-color: #37474f;
+}
+.bg-2 .button {
+    color: #7986CB;
+    border-color: #7986CB;
+}
+.bg-3 .button {
+    color: #7986CB;
+    border-color: #7986CB;
+}
+
+.button--size-s {
+    font-size: 12px;
+}
+
+
+/* Typography and Roundedness */
+.button--text-upper {
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.button--text-thick {
+    font-weight: 600;
+}
+.button--round-s {
+    border-radius: 5px;
+}
+
+
+/* Borders */
+.button--border-thin {
+    border: 1px solid;
+}
+.button--border-medium {
+    border: 2px solid;
+}
+.button--border-thick {
+    border: 3px solid;
+}
+
+
+/* Ujarak */
+.button--ujarak {
+    -webkit-transition: border-color 0.4s, color 0.4s;
+    transition: border-color 0.4s, color 0.4s;
+}
+.button--ujarak::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #37474f;
+    z-index: -1;
+    opacity: 0;
+    -webkit-transform: scale3d(0.7, 1, 1);
+    transform: scale3d(0.7, 1, 1);
+    -webkit-transition: -webkit-transform 0.4s, opacity 0.4s;
+    transition: transform 0.4s, opacity 0.4s;
+    -webkit-transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
+    transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
+}
+.button--ujarak.button--round-s::before {
+    border-radius: 2px;
+}
+.button--ujarak.button--inverted::before {
+    background: #7986CB;
+}
+.button--ujarak,
+.button--ujarak::before {
+    -webkit-transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
+    transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
+}
+.button--ujarak:hover {
+    color: #fff;
+    border-color: #37474f;
+}
+.button--ujarak.button--inverted:hover {
+    color: #37474F;
+    border-color: #fff;
+}
+.button--ujarak:hover::before {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
